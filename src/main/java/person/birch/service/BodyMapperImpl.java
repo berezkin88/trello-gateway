@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Singleton
 public class BodyMapperImpl implements BodyMapper {
@@ -46,6 +46,8 @@ public class BodyMapperImpl implements BodyMapper {
         return cardObject;
     }
 
+    // todo: get 'cover' by size
+    // todo: get 'dateLastActivity' by size
     @Override
     public String simplifyCardDetailsResponseBody(String source) {
         try {

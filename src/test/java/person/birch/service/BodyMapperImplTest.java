@@ -1,6 +1,5 @@
 package person.birch.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -14,8 +13,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 class BodyMapperImplTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(BodyMapperImplTest.class);
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @DisplayName("Test Body Mapper")
     @Test

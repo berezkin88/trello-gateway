@@ -5,8 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import person.birch.config.CredConfig;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
@@ -15,6 +15,7 @@ import java.net.http.HttpResponse;
 
 import static java.text.MessageFormat.format;
 
+// rebuild as command line app https://quarkus.io/guides/command-mode-reference
 @Singleton
 public class TrelloGatewayImpl implements TrelloGateway {
 
