@@ -1,48 +1,63 @@
 package person.birch.service;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.*;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Service
+@Singleton
 public class S3Service {
 
-    @Value("${aws.s3.bucket}")
-    private String bucketName;
-    private final AmazonS3 s3Client;
-
-
-    public S3Service(AmazonS3 s3Client) {
-        this.s3Client = s3Client;
-    }
+    @ConfigProperty(name = "aws.s3.bucket")
+    String bucketName;
+    @Inject
+    S3Client s3Client;
 
     public List<String> listObjects() {
-        ObjectListing objectListing = s3Client.listObjects(bucketName);
-        return objectListing.getObjectSummaries()
+        var listObjectsRequest = ListObjectsRequest.builder()
+            .bucket(bucketName)
+            .build();
+        return s3Client.listObjects(listObjectsRequest)
+                .contents()
                 .stream()
-                .map(S3ObjectSummary::getKey)
-                .collect(Collectors.toList());
+                .map(S3Object::key)
+                .toList();
     }
 
     public void uploadFile(File file) throws IOException {
-        s3Client.putObject(new PutObjectRequest(bucketName, file.getName(), new FileInputStream(file), null));
+        var putObjectRequest = PutObjectRequest.builder()
+            .bucket(bucketName)
+            .key(file.getName())
+            .contentType("application/json")
+            .build();
+        s3Client.putObject(putObjectRequest, RequestBody.fromFile(file));
     }
 
-    public S3Object downloadFile(String fileName) {
-        return s3Client.getObject(new GetObjectRequest(bucketName, fileName));
+    public String downloadFile(String fileName) {
+        var getObjectRequest = GetObjectRequest.builder()
+            .bucket(bucketName)
+            .key(fileName)
+            .build();
+        return s3Client.getObjectAsBytes(getObjectRequest)
+            .asString(Charset.defaultCharset());
     }
 
     public void deleteFile(String fileName) {
-        s3Client.deleteObject(new DeleteObjectRequest(bucketName, fileName));
-    }
-    public String getFileUrl(String fileName) {
-        return s3Client.getUrl(bucketName, fileName).toExternalForm();
+        var deleteObjectRequest = DeleteObjectRequest.builder()
+            .bucket(bucketName)
+            .key(fileName)
+            .build();
+        s3Client.deleteObject(deleteObjectRequest);
     }
 }
