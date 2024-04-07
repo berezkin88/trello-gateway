@@ -4,12 +4,11 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.inject.Singleton;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import jakarta.inject.Singleton;
 
 @Singleton
 public class BodyMapperImpl implements BodyMapper {
@@ -35,19 +34,38 @@ public class BodyMapperImpl implements BodyMapper {
         }
     }
 
-    private static JSONObject getCardObject(JsonNode card) {
+    private JSONObject getCardObject(JsonNode card) {
         var cardObject = new JSONObject();
 
-        cardObject.put("id", card.get("id").textValue());
-        cardObject.put("name", card.get("name").textValue());
-        cardObject.put("desc", card.get("desc").textValue());
+        cardObject.put("image", getCover(card.get("cover")));
+        cardObject.put("item", "reports.items.medicine"); //todo: add classification
+        cardObject.put("description", card.get("name").textValue());
+        cardObject.put("price", card.get("name").textValue()); //todo: cut price from the name
+        cardObject.put("currency", "shared.currency.uah");
         cardObject.put("date", card.get("dateLastActivity").textValue());
-        cardObject.put("url", card.get("shortUrl").textValue());
         return cardObject;
     }
 
-    // todo: get 'cover' by size
-    // todo: get 'dateLastActivity' by size
+    private String getCover(JsonNode coverNode) {
+        if (null == coverNode) {
+            return "n/a";
+        }
+
+        var scaleNodes = coverNode.get("scaled");
+        if (null == scaleNodes || scaleNodes.isEmpty()) {
+            return "n/a";
+        }
+
+        for (var scaleNode : scaleNodes) {
+            var width = scaleNode.get("width").asInt();
+            if (599 <= width) {
+                return scaleNode.get("url").textValue();
+            }
+        }
+
+        return "n/a";
+    }
+
     @Override
     public String simplifyCardDetailsResponseBody(String source) {
         try {
@@ -71,7 +89,7 @@ public class BodyMapperImpl implements BodyMapper {
         }
     }
 
-    private static JSONObject getAttachmentObject(JsonNode attachment) {
+    private JSONObject getAttachmentObject(JsonNode attachment) {
         var attachmentObject = new JSONObject();
 
         attachmentObject.put("id", attachment.get("id").textValue());

@@ -33,7 +33,7 @@ public class TrelloGatewayImpl implements TrelloGateway {
         log.debug("Get completed cards from list [{}]", listId);
 
         var uriString
-            = format("{0}/lists/{1}/cards?key={2}&token={3}", HTTPS_TRELLO_URL, listId, credConfig.tKey(), credConfig.tToken());
+            = format("{0}/lists/{1}/cards?key={2}&token={3}&attachments=true", HTTPS_TRELLO_URL, listId, credConfig.tKey(), credConfig.tToken());
 
         var request = HttpRequest.newBuilder()
             .uri(new URI(uriString))
