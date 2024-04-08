@@ -99,8 +99,14 @@ public class BodyMapperImpl implements BodyMapper {
         var price = matcher.group(1)
             .replace(",", "."); // just in case if a comma slips in.
 
-        var number = new BigDecimal(price).multiply(new BigDecimal(1000));
-        return String.format("%,d", number.intValue());
+        BigDecimal number = null;
+        try {
+            number = new BigDecimal(price).multiply(new BigDecimal(1000));
+            return String.format("%,d", number.intValue());
+        } catch (NumberFormatException e) {
+            LOG.error("Failed to parse input [{}] for BigDecimal", number);
+            return "n/a";
+        }
     }
 
     private String getDate(JsonNode dateNode) {
