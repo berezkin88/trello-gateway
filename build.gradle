@@ -19,6 +19,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
     implementation 'org.json:json:20231013'
     implementation 'software.amazon.awssdk:url-connection-client:2.25.22'
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
 }
