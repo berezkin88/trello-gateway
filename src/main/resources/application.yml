@@ -1,0 +1,45 @@
+aws:
+  s3:
+    access-key: ${AWS_ACCESS_KEY:}
+    secret-key: ${AWS_SECRET_KEY:}
+    region: ${AWS_S3_REGION:}
+    bucket: ${AWS_S3_BUCKET:}
+
+idx:
+  location: ./cat-idx
+  categories:
+    - key: carRepair
+      title: Car repair
+      keywords: "гума шини ремонт авто ходова колеса акумулятор"
+    - key: drones
+      title: Drones
+      keywords: "mavic дрон коптер квадрокоптер drone"
+    - key: electronics
+      title: Electronic equipment
+      keywords: "ноутбук laptop tablet планшет комп'ютер монітор"
+    - key: kits
+      title: First aid kits
+      keywords: "ліки турнікет бандаж аптечка"
+    - key: nightVisionDevices
+      title: Night vision devices
+      keywords: "пнб тепловізор cyclops циклоп pvs тєплак тєплік нічник прилад нічного бачення"
+    - key: other
+      title: Other aid
+      keywords: "холодильник грілка лопата плащ дощовик цигарки сигарети спальник спальний мішок"
+    - key: powerGenerator
+      title: Power generator
+      keywords: "зарядна станція генератор ecoflow anker павербанк powerbank"
+    - key: radios
+      title: Radio transmitters
+      keywords: "рація старлінк starlink антена реб глушилка"
+    - key: equipment
+      title: Equipment
+      keywords: "шолом плитоноска броня бронепластина форма екіп рюкзак взуття бреці рукавиці саперський набір бінокль вуха навушники глушник планка пікатіні"
+
+source:
+  t-key: foo
+  t-token: boo
+  t-board-id: fooBoo
+
+g-translator:
+  url:
