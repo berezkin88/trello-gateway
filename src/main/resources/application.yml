@@ -5,7 +5,6 @@ aws:
     region: ${AWS_S3_REGION:}
     bucket: ${AWS_S3_BUCKET:}
 
-
 idx:
   location: ./cat-idx
   categories:
@@ -37,6 +36,10 @@ idx:
       title: Equipment
       keywords: "шолом плитоноска броня бронепластина форма екіп рюкзак взуття бреці рукавиці саперський набір бінокль вуха навушники глушник планка пікатіні"
 
+source:
+  t-key: foo
+  t-token: boo
+  t-board-id: fooBoo
 
-
-
+g-translator:
+  url:

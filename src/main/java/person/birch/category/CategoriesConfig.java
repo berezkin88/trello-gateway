@@ -1,12 +1,12 @@
 package person.birch.category;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import jakarta.inject.Singleton;
+import org.eclipse.microprofile.config.inject.ConfigProperties;
 
 import java.util.List;
 
-@Configuration
-@ConfigurationProperties(prefix = "idx")
+@Singleton
+@ConfigProperties(prefix = "idx")
 public class CategoriesConfig {
     private String location;
     private List<Category> categories;

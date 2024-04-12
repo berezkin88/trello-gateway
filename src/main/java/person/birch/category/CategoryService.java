@@ -1,8 +1,16 @@
 package person.birch.category;
 
+import jakarta.inject.Singleton;
 import org.apache.lucene.analysis.uk.UkrainianMorfologikAnalyzer;
-import org.apache.lucene.document.*;
-import org.apache.lucene.index.*;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -11,7 +19,6 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -19,7 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Singleton
 public class CategoryService {
     private static final String KEYWORDS_FIELD = "KEYWORDS";
     private static final String KEY_FIELD = "KEY";
