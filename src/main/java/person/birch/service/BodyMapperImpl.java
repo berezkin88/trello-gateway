@@ -4,12 +4,17 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.inject.Singleton;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.inject.Singleton;
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.regex.Pattern;
 
 @Singleton
 public class BodyMapperImpl implements BodyMapper {
@@ -35,19 +40,90 @@ public class BodyMapperImpl implements BodyMapper {
         }
     }
 
-    private static JSONObject getCardObject(JsonNode card) {
+    private JSONObject getCardObject(JsonNode card) {
         var cardObject = new JSONObject();
 
-        cardObject.put("id", card.get("id").textValue());
-        cardObject.put("name", card.get("name").textValue());
-        cardObject.put("desc", card.get("desc").textValue());
-        cardObject.put("date", card.get("dateLastActivity").textValue());
-        cardObject.put("url", card.get("shortUrl").textValue());
+        cardObject.put("image", getCover(card.get("cover")));
+        cardObject.put("item", "reports.items.medicine"); //todo: add classification
+        cardObject.put("description", getDescription(card.get("name")));
+        cardObject.put("price", getPrice(card.get("name")));
+        cardObject.put("currency", "shared.currency.uah");
+        cardObject.put("date", getDate(card.get("dateLastActivity")));
         return cardObject;
     }
 
-    // todo: get 'cover' by size
-    // todo: get 'dateLastActivity' by size
+    private String getCover(JsonNode coverNode) {
+        if (null == coverNode) {
+            return "n/a";
+        }
+
+        var scaleNodes = coverNode.get("scaled");
+        if (null == scaleNodes || scaleNodes.isEmpty()) {
+            return "n/a";
+        }
+
+        for (var scaleNode : scaleNodes) {
+            var width = scaleNode.get("width").asInt();
+            if (599 <= width) {
+                return scaleNode.get("url").textValue();
+            }
+        }
+
+        return "n/a";
+    }
+
+    private String getDescription(JsonNode nameNode) {
+        if (null == nameNode) {
+            return "n/a";
+        }
+
+        var nameString = nameNode.textValue();
+        var cutDescription = nameString.substring(0, nameString.indexOf("("));
+
+        return cutDescription.trim();
+    }
+
+    private String getPrice(JsonNode nameNode) {
+        if (null == nameNode) {
+            return "n/a";
+        }
+
+        var nameString = nameNode.textValue();
+        var pattern = Pattern.compile("\\((.+)[KКkк]\\)"); // Grab everything between parentheses. Latin 'Kk' and Cyrillic 'Кк' are considered
+        var matcher = pattern.matcher(nameString);
+
+        if (!matcher.find()) {
+            return "n/a";
+        }
+
+        var price = matcher.group(1)
+            .replace(",", "."); // just in case if a comma slips in.
+
+        BigDecimal number = null;
+        try {
+            number = new BigDecimal(price).multiply(new BigDecimal(1000));
+            return String.format("%,d", number.intValue());
+        } catch (NumberFormatException e) {
+            LOG.error("Failed to parse input [{}] for BigDecimal", number);
+            return "n/a";
+        }
+    }
+
+    private String getDate(JsonNode dateNode) {
+        if (null == dateNode) {
+            return "n/a";
+        }
+
+        var textDateTime = dateNode.textValue();
+        try {
+            var dateTime = OffsetDateTime.parse(textDateTime);
+            return dateTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        } catch (DateTimeParseException e) {
+            LOG.error("Failed to parse date, [{}]", textDateTime);
+            return "n/a";
+        }
+    }
+
     @Override
     public String simplifyCardDetailsResponseBody(String source) {
         try {
@@ -71,7 +147,7 @@ public class BodyMapperImpl implements BodyMapper {
         }
     }
 
-    private static JSONObject getAttachmentObject(JsonNode attachment) {
+    private JSONObject getAttachmentObject(JsonNode attachment) {
         var attachmentObject = new JSONObject();
 
         attachmentObject.put("id", attachment.get("id").textValue());

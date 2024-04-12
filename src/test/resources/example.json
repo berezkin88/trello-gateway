@@ -44,7 +44,7 @@
     "labels": [],
     "idLabels": [],
     "manualCoverAttachment": true,
-    "name": "Stardust 4 (Поки вільний)",
+    "name": "Stardust 4 (199K)",
     "pos": 24576,
     "shortLink": "mcP96qPF",
     "shortUrl": "https://trello.com/c/fakelink",
@@ -52,11 +52,68 @@
     "subscribed": false,
     "url": "https://trello.com/c/fakelink/52-stardust-2-%D0%BF%D0%BE%D0%BA%D0%B8-%D0%B2%D1%96%D0%BB%D1%8C%D0%BD%D0%B8%D0%B9",
     "cover": {
-      "idAttachment": null,
+      "idAttachment": "6602boo373192e5b69aafoo",
       "color": null,
       "idUploadedBackground": null,
       "size": "normal",
       "brightness": "dark",
+      "scaled": [
+        {
+          "id": "6602876473192e5b69aa55bd",
+          "_id": "6602876473192e5b69aa55bd",
+          "scaled": false,
+          "url": "https://trello.com/1/cards/65fd6cb3468692744a1e5355/attachments/6602876373192e5b69aa5064/previews/6602876473192e5b69aa55bd/download/helmet.webp",
+          "bytes": 928,
+          "height": 50,
+          "width": 70
+        },
+        {
+          "id": "6602876473192e5b69aa55bf",
+          "_id": "6602876473192e5b69aa55bf",
+          "scaled": true,
+          "url": "https://trello.com/1/cards/65fd6cb3468692744a1e5355/attachments/6602876373192e5b69aa5064/previews/6602876473192e5b69aa55bf/download/helmet.webp",
+          "bytes": 4278,
+          "height": 150,
+          "width": 150
+        },
+        {
+          "id": "6602876473192e5b69aa55be",
+          "_id": "6602876473192e5b69aa55be",
+          "scaled": false,
+          "url": "https://trello.com/1/cards/65fd6cb3468692744a1e5355/attachments/6602876373192e5b69aa5064/previews/6602876473192e5b69aa55be/download/helmet.webp",
+          "bytes": 4234,
+          "height": 150,
+          "width": 250
+        },
+        {
+          "id": "6602876473192e5b69aa55c0",
+          "_id": "6602876473192e5b69aa55c0",
+          "scaled": true,
+          "url": "https://trello.com/1/cards/65fd6cb3468692744a1e5355/attachments/6602876373192e5b69aa5064/previews/6602876473192e5b69aa55c0/download/helmet.webp",
+          "bytes": 12974,
+          "height": 300,
+          "width": 300
+        },
+        {
+          "id": "6602876473192e5b69aa55c1",
+          "_id": "6602876473192e5b69aa55c1",
+          "scaled": true,
+          "url": "https://trello.com/1/cards/65fd6cb3468692744a1e5355/attachments/6602876373192e5b69aa5064/previews/6602876473192e5b69aa55c1/download/helmet.webp",
+          "bytes": 39458,
+          "height": 600,
+          "width": 600
+        },
+        {
+          "id": "6602876473192e5b69aa55c2",
+          "_id": "6602876473192e5b69aa55c2",
+          "scaled": true,
+          "url": "https://trello.com/1/cards/65fd6cb3468692744a1e5355/attachments/6602876373192e5b69aa5064/previews/6602876473192e5b69aa55c2/download/helmet.webp",
+          "bytes": 128406,
+          "height": 1200,
+          "width": 1200
+        }
+      ],
+      "edgeColor": "#fbfbfb",
       "idPlugin": null
     },
     "isTemplate": false,
