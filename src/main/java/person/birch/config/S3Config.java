@@ -7,7 +7,6 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 
-@Singleton
 @ConfigProperties(prefix = "aws.s3")
 public class S3Config {
     private String accessKey;

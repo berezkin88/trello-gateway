@@ -10,7 +10,6 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -23,7 +22,6 @@ import org.apache.lucene.store.FSDirectory;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @Singleton
@@ -37,20 +35,18 @@ public class CategoryService {
 
     public CategoryService(CategoriesConfig config) throws IOException {
         this.config = config;
-        directory = FSDirectory.open(Paths.get(config.getLocation()));
+        directory = FSDirectory.open(Paths.get(config.location()));
     }
 
     /**
      * Run it when category index doesn't exist
      * or category was added or deleted
      * or when some properties of category were changed
-     *
-     * @throws IOException
      */
     public void createIndex() throws IOException {
         try (IndexWriter writer = new IndexWriter(directory, new IndexWriterConfig())) {
-            List<Category> categories = config.getCategories();
-            for (Category category : categories) {
+            var categories = config.categories();
+            for (var category : categories) {
                 Document doc = createDoc(category);
                 writer.addDocument(doc);
             }
@@ -60,7 +56,7 @@ public class CategoryService {
     }
 
 
-    public Optional<Category> search(String searchString) throws IOException, ParseException {
+    public Optional<CategoryImpl> search(String searchString) throws IOException, ParseException {
         Query query = new QueryParser(KEYWORDS_FIELD, new UkrainianMorfologikAnalyzer()).parse(searchString);
         IndexReader indexReader = DirectoryReader.open(directory);
         IndexSearcher searcher = new IndexSearcher(indexReader);
@@ -71,24 +67,24 @@ public class CategoryService {
         }
         ScoreDoc scoreDoc = Arrays.stream(topDocs.scoreDocs).findFirst().get();
         Document doc = searcher.doc(scoreDoc.doc);
-        Category category = createCategory(doc);
+        CategoryImpl categoryImpl = createCategory(doc);
 
-        return Optional.of(category);
+        return Optional.of(categoryImpl);
     }
 
-    private Category createCategory(Document doc) {
-        Category category = new Category();
-        category.setKey(doc.get(KEY_FIELD));
-        category.setTitle(doc.get(TITLE_FIELD));
-        category.setKeywords(doc.get(KEYWORDS_FIELD));
-        return category;
+    private CategoryImpl createCategory(Document doc) {
+        CategoryImpl categoryImpl = new CategoryImpl();
+        categoryImpl.setKey(doc.get(KEY_FIELD));
+        categoryImpl.setTitle(doc.get(TITLE_FIELD));
+        categoryImpl.setKeywords(doc.get(KEYWORDS_FIELD));
+        return categoryImpl;
     }
 
-    private Document createDoc(Category category) {
-        Document doc = new Document();
-        IndexableField key = new StringField(KEY_FIELD, category.getKey(), Field.Store.YES);
-        IndexableField title = new StringField(TITLE_FIELD, category.getTitle(), Field.Store.YES);
-        IndexableField keywords = new TextField(KEYWORDS_FIELD, category.getKeywords(), Field.Store.YES);
+    private Document createDoc(CategoriesConfig.Category category) {
+        var doc = new Document();
+        var key = new StringField(KEY_FIELD, category.getKey(), Field.Store.YES);
+        var title = new StringField(TITLE_FIELD, category.getTitle(), Field.Store.YES);
+        var keywords = new TextField(KEYWORDS_FIELD, category.getKeywords(), Field.Store.YES);
 
         doc.add(key);
         doc.add(title);

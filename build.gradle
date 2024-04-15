@@ -24,8 +24,11 @@ dependencies {
     implementation 'org.apache.lucene:lucene-queryparser:9.10.0'
     implementation 'org.apache.lucene:lucene-analysis-common:9.10.0'
     implementation 'org.apache.lucene:lucene-analyzers-morfologik:8.11.3'
+    implementation("io.quarkus:quarkus-config-yaml")
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
+    testImplementation 'io.quarkus:quarkus-junit5-mockito:3.9.3'
+    testImplementation 'io.quarkus:quarkus-junit5-component:3.9.3'
 }
 
 group 'person.birch'
