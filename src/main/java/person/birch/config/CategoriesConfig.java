@@ -1,4 +1,4 @@
-package person.birch.category;
+package person.birch.config;
 
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithName;
@@ -14,8 +14,8 @@ public interface CategoriesConfig {
         @WithName("key")
         String getKey();
         @WithName("title")
-        public String getTitle();
+        String getTitle();
         @WithName("keywords")
-        public String getKeywords();
+        String getKeywords();
     }
 }

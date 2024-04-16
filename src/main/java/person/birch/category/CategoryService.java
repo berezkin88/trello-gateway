@@ -18,6 +18,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import person.birch.config.CategoriesConfig;
 
 import java.io.IOException;
 import java.nio.file.Paths;

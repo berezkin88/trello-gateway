@@ -29,6 +29,7 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured'
     testImplementation 'io.quarkus:quarkus-junit5-mockito:3.9.3'
     testImplementation 'io.quarkus:quarkus-junit5-component:3.9.3'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 }
 
 group 'person.birch'

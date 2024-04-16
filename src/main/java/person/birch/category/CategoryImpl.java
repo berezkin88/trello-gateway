@@ -2,6 +2,7 @@ package person.birch.category;
 
 import io.smallrye.config.WithName;
 import org.eclipse.microprofile.config.inject.ConfigProperties;
+import person.birch.config.CategoriesConfig;
 
 @ConfigProperties
 public class CategoryImpl implements CategoriesConfig.Category {

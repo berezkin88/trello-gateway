@@ -4,14 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Singleton;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import person.birch.model.Report;
 import person.birch.model.ReportsContainer;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -21,14 +20,18 @@ import java.util.concurrent.TimeoutException;
 public class EnglishInterpreterImpl implements EnglishInterpreter {
 
     private static final Logger LOG = LoggerFactory.getLogger(EnglishInterpreterImpl.class);
-    private final ReportMapper reportMapper = Mappers.getMapper(ReportMapper.class);
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final GTranslatorService gTranslatorService;
+
+    public EnglishInterpreterImpl(GTranslatorService gTranslatorService) {
+        this.gTranslatorService = gTranslatorService;
+    }
 
     @Override
     public ReportsContainer translateToEng(Uni<String> input) throws TimeoutException, ExecutionException, InterruptedException {
         var ukrReports = getUkrReports(input);
         var engReport = ukrReports.stream()
-            .map(reportMapper::clone)
+            .map(this::clone)
             .toList();
         return new ReportsContainer(ukrReports, engReport);
     }
@@ -46,9 +49,20 @@ public class EnglishInterpreterImpl implements EnglishInterpreter {
             .get(10, TimeUnit.SECONDS);
     }
 
-    @Mapper
-    interface ReportMapper {
-        @Mapping(target = "currency", constant = "shared.currency.eur")
-        Report clone(Report report);
+    private Report clone(Report report) {
+        if ( report == null ) {
+            return null;
+        }
+
+        var price = report.price(); // todo: convert price
+        String description;
+        try {
+            description = gTranslatorService.translate(report.description());
+        } catch (IOException | URISyntaxException e) {
+            description = report.description() + ": oops... failed to translate";
+        }
+        var currencyEur = "shared.currency.eur";
+
+        return new Report(report.image(), report.item(), description, price, currencyEur, report.date());
     }
 }
