@@ -1,7 +1,7 @@
 package person.birch.service;
 
-import person.birch.model.ReportsContainer;
+import person.birch.model.ReportsContext;
 
 public interface ReportRetriever {
-    ReportsContainer getReports(String... args);
+    ReportsContext getReports(String... args);
 }

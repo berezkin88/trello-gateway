@@ -6,7 +6,7 @@ import io.smallrye.mutiny.Uni;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import person.birch.model.ReportsContainer;
+import person.birch.model.ReportsContext;
 import person.birch.model.TrelloList;
 
 import java.net.URISyntaxException;
@@ -31,12 +31,12 @@ public class ReportRetrieverImpl implements ReportRetriever {
         .map(m -> m.getDisplayName(TextStyle.FULL_STANDALONE, UK_LOCALE));
 
     private final TrelloGateway trelloGateway;
-    private final EnglishInterpreter englishInterpreter;
+    private final ReportsBuilder reportsBuilder;
 
     public ReportRetrieverImpl(TrelloGateway trelloGateway,
-                               EnglishInterpreter englishInterpreter) {
+                               ReportsBuilder reportsBuilder) {
         this.trelloGateway = trelloGateway;
-        this.englishInterpreter = englishInterpreter;
+        this.reportsBuilder = reportsBuilder;
     }
 
     /**
@@ -49,16 +49,18 @@ public class ReportRetrieverImpl implements ReportRetriever {
      */
 
     @Override
-    public ReportsContainer getReports(String... args) {
+    public ReportsContext getReports(String... args) {
         var monthsAndYear = resolveArgs(args);
 
-        ReportsContainer reportsContainer = null;
+        ReportsContext reportsContext = null;
         try {
             var lists = trelloGateway.getLists();
-            LOG.info(lists.subscribeAsCompletionStage().get());
+            LOG.info("Отримання всіх доступних звітів...");
             var listId = getListId(lists, monthsAndYear);
+            LOG.info("Отримання обраних звітів...");
             var cards = trelloGateway.getListDetails(listId);
-            reportsContainer = englishInterpreter.translateToEng(cards);
+            LOG.info("Перепакування звітів...");
+            reportsContext = reportsBuilder.buildReports(cards);
         } catch (URISyntaxException | ExecutionException | TimeoutException | JsonProcessingException e) {
             LOG.error("Failed to retrieve Lists from the Board", e);
             return null;
@@ -66,7 +68,8 @@ public class ReportRetrieverImpl implements ReportRetriever {
             Thread.currentThread().interrupt();
         }
 
-        return reportsContainer;
+        LOG.info("Звіти створено");
+        return reportsContext;
     }
 
     /**

@@ -1,7 +1,5 @@
 package person.birch.service;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -16,12 +14,12 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
-@Singleton
+//@Singleton // skip for now
 public class S3Service {
 
     @ConfigProperty(name = "aws.s3.bucket")
     String bucketName;
-    @Inject
+//    @Inject
     S3Client s3Client;
 
     public List<String> listObjects() {

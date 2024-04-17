@@ -16,14 +16,14 @@ class ReportRetrieverImplTest {
     @Inject
     TrelloGateway trelloGateway;
     @Inject
-    EnglishInterpreter englishInterpreter;
+    ReportsBuilder reportsBuilder;
     @Inject
     CategoryService categoryService;
 
 
     @BeforeEach
     void setUp() throws IOException {
-        reportRetriever = new ReportRetrieverImpl(trelloGateway, englishInterpreter);
+        reportRetriever = new ReportRetrieverImpl(trelloGateway, reportsBuilder);
 //        categoryService.createIndex();
     }
 

@@ -1,6 +1,5 @@
 package person.birch.config;
 
-import jakarta.inject.Singleton;
 import org.eclipse.microprofile.config.inject.ConfigProperties;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -14,7 +13,7 @@ public class S3Config {
     private String bucket;
     private String region;
 
-    @Singleton
+//    @Singleton
     public S3Client s3client() {
 
         var awsCredentials = AwsBasicCredentials.create(accessKey, secretKey);
