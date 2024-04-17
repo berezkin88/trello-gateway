@@ -4,12 +4,17 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Nullable;
 import jakarta.inject.Singleton;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import person.birch.category.CategoryImpl;
+import person.birch.category.CategoryService;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,6 +26,11 @@ public class BodyMapperImpl implements BodyMapper {
 
     private static final Logger LOG = LoggerFactory.getLogger(BodyMapperImpl.class);
     private final ObjectMapper mapper = new ObjectMapper(new JsonFactory());
+    private final CategoryService categoryService;
+
+    public BodyMapperImpl(@Nullable CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     @Override
     public String simplifyCardsResponseBody(String source) {
@@ -43,13 +53,30 @@ public class BodyMapperImpl implements BodyMapper {
     private JSONObject getCardObject(JsonNode card) {
         var cardObject = new JSONObject();
 
+        var description = getDescription(card.get("name"));
         cardObject.put("image", getCover(card.get("cover")));
-        cardObject.put("item", "reports.items.medicine"); //todo: add classification
-        cardObject.put("description", getDescription(card.get("name")));
+        cardObject.put("item", getCategory(description));
+        cardObject.put("description", description);
         cardObject.put("price", getPrice(card.get("name")));
         cardObject.put("currency", "shared.currency.uah");
         cardObject.put("date", getDate(card.get("dateLastActivity")));
         return cardObject;
+    }
+
+    private String getCategory(String description) {
+        if (null == categoryService) {
+            return "reports.items.other";
+        }
+
+        try {
+            return categoryService.search(description)
+                .map(CategoryImpl::getKey)
+                .map("reports.items.%s"::formatted)
+                .orElse("reports.items.other");
+        } catch (IOException | ParseException e) {
+            LOG.error("Failed to parse category", e);
+            return "reports.items.other";
+        }
     }
 
     private String getCover(JsonNode coverNode) {
@@ -78,6 +105,10 @@ public class BodyMapperImpl implements BodyMapper {
         }
 
         var nameString = nameNode.textValue();
+        var indexOfOpenBrace = nameString.indexOf('(');
+        if (-1 == indexOfOpenBrace) {
+            return nameString.trim();
+        }
         var cutDescription = nameString.substring(0, nameString.indexOf("("));
 
         return cutDescription.trim();

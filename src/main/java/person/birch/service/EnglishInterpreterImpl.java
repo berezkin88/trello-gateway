@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import person.birch.model.Report;
 import person.birch.model.ReportsContainer;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -55,12 +53,12 @@ public class EnglishInterpreterImpl implements EnglishInterpreter {
         }
 
         var price = report.price(); // todo: convert price
-        String description;
-        try {
-            description = gTranslatorService.translate(report.description());
-        } catch (IOException | URISyntaxException e) {
-            description = report.description() + ": oops... failed to translate";
-        }
+        String description = report.description();
+//        try {
+//            description = gTranslatorService.translate(report.description());
+//        } catch (IOException | URISyntaxException e) {
+//            description = report.description() + ": oops... failed to translate";
+//        }
         var currencyEur = "shared.currency.eur";
 
         return new Report(report.image(), report.item(), description, price, currencyEur, report.date());

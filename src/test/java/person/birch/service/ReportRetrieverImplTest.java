@@ -29,8 +29,8 @@ class ReportRetrieverImplTest {
 
     @Test
     void getReports() {
-        var reports = reportRetriever.getReports();
-
+        var reports = reportRetriever.getReports("квітень", "2024");
+        System.out.println(reports.toString());
         Assertions.assertNotNull(reports);
     }
 }

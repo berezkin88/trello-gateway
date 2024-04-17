@@ -1,18 +1,23 @@
 package person.birch.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.smallrye.mutiny.Uni;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import person.birch.model.ReportsContainer;
+import person.birch.model.TrelloList;
 
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.TextStyle;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -49,11 +54,11 @@ public class ReportRetrieverImpl implements ReportRetriever {
 
         ReportsContainer reportsContainer = null;
         try {
-            var lists = trelloGateway.getLists(); // todo: parse and get list id
-            // 65e358ee6bbdeb4c90d31d0e
-            var cards = trelloGateway.getListDetails("65e358ee6bbdeb4c90d31d0e");
+            var lists = trelloGateway.getLists();
+            LOG.info(lists.subscribeAsCompletionStage().get());
+            var listId = getListId(lists, monthsAndYear);
+            var cards = trelloGateway.getListDetails(listId);
             reportsContainer = englishInterpreter.translateToEng(cards);
-            LOG.info(reportsContainer.toString());
         } catch (URISyntaxException | ExecutionException | TimeoutException | JsonProcessingException e) {
             LOG.error("Failed to retrieve Lists from the Board", e);
             return null;
@@ -114,5 +119,24 @@ public class ReportRetrieverImpl implements ReportRetriever {
         }
 
         return LocalDate.now().getYear();
+    }
+
+    private String getListId(Uni<String> lists, String monthsAndYear) throws ExecutionException, InterruptedException, TimeoutException {
+        var objectMapper = new ObjectMapper();
+        return lists.map(str -> {
+                try {
+                    return objectMapper.readValue(str, objectMapper.getTypeFactory().constructCollectionType(List.class, TrelloList.class));
+                } catch (JsonProcessingException e) {
+                    LOG.error("Failed to parse reports", e);
+                    return List.<TrelloList>of();
+                }
+            })
+            .subscribeAsCompletionStage()
+            .get(10, TimeUnit.SECONDS)
+            .stream()
+            .filter(tl -> monthsAndYear.equalsIgnoreCase(tl.name()))
+            .map(TrelloList::id)
+            .findFirst()
+            .orElse("bogus");
     }
 }
