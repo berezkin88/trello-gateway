@@ -21,7 +21,7 @@ class BodyMapperImplTest {
     void simplifyResponseBody() {
         try  {
             var example = new String(getClass().getResourceAsStream("/example.json").readAllBytes());
-            var mapper = new BodyMapperImpl();
+            var mapper = new BodyMapperImpl(null);
 
             var result = mapper.simplifyCardsResponseBody(example);
             LOG.info("\n" + OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(OBJECT_MAPPER.readTree(result)));

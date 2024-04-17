@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 public class GTranslatorService {
     private static final String USER_AGENT = "User-Agent";
     private static final String MOZILLA_5_0 = "Mozilla/5.0";
-    @ConfigProperty(name = "g-translator.url")
+    @ConfigProperty(name = "g-translator.url", defaultValue = "https://example.com")
     String url;
 
     /**
