@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.file.Paths;
 
-@Disabled("better not to run in pipeline, sequence is important as there is ")
+@Disabled("better not to run in pipeline, sequence is important")
 @QuarkusTest
 class S3ServiceTest {
 

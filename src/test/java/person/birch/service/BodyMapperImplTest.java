@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -20,7 +21,8 @@ class BodyMapperImplTest {
     @Test
     void simplifyResponseBody() {
         try  {
-            var example = new String(getClass().getResourceAsStream("/example.json").readAllBytes());
+            var resourceAsStream = getClass().getResourceAsStream("/example.json");
+            var example = new String(Objects.requireNonNull(resourceAsStream).readAllBytes());
             var mapper = new BodyMapperImpl(null);
 
             var result = mapper.simplifyCardsResponseBody(example);
