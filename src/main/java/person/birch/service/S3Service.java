@@ -40,7 +40,7 @@ public class S3Service {
         var putObjectRequest = PutObjectRequest.builder()
             .bucket(bucketName)
             .key(file.getName())
-            .contentType("image/webp")
+            .contentType("application/json")
             .build();
         s3Client.putObject(putObjectRequest, RequestBody.fromFile(file));
     }
