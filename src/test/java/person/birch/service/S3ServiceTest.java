@@ -3,12 +3,11 @@ package person.birch.service;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Paths;
 
-@Disabled("better not to run in pipeline, sequence is important")
+//@Disabled("better not to run in pipeline, sequence is important")
 @QuarkusTest
 class S3ServiceTest {
 

@@ -43,3 +43,8 @@ source:
 
 g-translator:
   url:
+
+quarkus:
+  s3:
+    devservices:
+      enabled: false
