@@ -1,0 +1,25 @@
+### get board lists
+GET https://api.trello.com/1/boards/{{BoardID}}/lists?key={{APIKey}}&token={{APIToken}}
+Accept: application/json
+
+### get list cards
+GET https://api.trello.com/1/lists/{{April2024ListID}}/cards?key={{APIKey}}&token={{APIToken}}
+Accept: application/json
+
+### get card by id
+GET https://api.trello.com/1/cards/{{PowerStattionCardID}}?key={{APIKey}}&token={{APIToken}}
+Accept: application/json
+
+### get cover attachment
+GET https://api.trello.com/1/cards/{{PowerStattionCardID}}/attachments/{{CoverAttachmentID}}?key={{APIKey}}&token={{APIToken}}
+Accept: application/json
+
+### download cover attachment
+# replace variables with real values as variables do not work in strings
+GET https://api.trello.com/1/cards/{{PowerStattionCardID}}/attachments/{{CoverAttachmentID}}/download/{{CoverAttachmentName}}
+Authorization: OAuth oauth_consumer_key="{{APIKey}}", oauth_token="{{APIToken}}"
+
+# APIKey=<set real value>
+# APIToken=<set real value>
+# curl -v -H "Authorization: OAuth oauth_consumer_key=\"$APIKey\", oauth_token=\"$APIToken\"" https://trello.com/1/cards/65b4ab5fb7e9253d234d5c6b/attachments/660acf532cc93ce33de612dc/previews/660acf542cc93ce33de61335/download/anker555.webp
+
