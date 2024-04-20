@@ -113,6 +113,10 @@ public class ReportsBuilderImpl implements ReportsBuilder {
 
     // weak spot, think how to improve
     private void updateReportsDescriptions(List<Report> originalReports, Map<String, String> descriptionUrk) {
+        if (null == originalReports || null == descriptionUrk) {
+            return;
+        }
+
         descriptionUrk.forEach((key, value) -> {
             for (var report : originalReports) {
                 if (value.equals(report.getDescription())) {

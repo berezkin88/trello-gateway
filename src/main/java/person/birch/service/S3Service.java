@@ -1,25 +1,28 @@
 package person.birch.service;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.List;
 
-//@Singleton // skip for now
+@Singleton
 public class S3Service {
 
     @ConfigProperty(name = "aws.s3.bucket")
     String bucketName;
-//    @Inject
+    @Inject
     S3Client s3Client;
 
     public List<String> listObjects() {
@@ -33,22 +36,26 @@ public class S3Service {
                 .toList();
     }
 
-    public void uploadFile(File file) throws IOException {
+    public void uploadFile(File file) {
         var putObjectRequest = PutObjectRequest.builder()
             .bucket(bucketName)
             .key(file.getName())
-            .contentType("application/json")
+            .contentType("image/webp")
             .build();
         s3Client.putObject(putObjectRequest, RequestBody.fromFile(file));
     }
 
-    public String downloadFile(String fileName) {
+    /**
+     * Will safe a targeted file into 'output' folder
+     * @param fileName of targeted file
+     * @return GetObjectResponse
+     */
+    public GetObjectResponse downloadFile(String fileName) {
         var getObjectRequest = GetObjectRequest.builder()
             .bucket(bucketName)
             .key(fileName)
             .build();
-        return s3Client.getObjectAsBytes(getObjectRequest)
-            .asString(Charset.defaultCharset());
+        return s3Client.getObject(getObjectRequest, Path.of("output/" + fileName));
     }
 
     public void deleteFile(String fileName) {
@@ -57,5 +64,13 @@ public class S3Service {
             .key(fileName)
             .build();
         s3Client.deleteObject(deleteObjectRequest);
+    }
+
+    public String getUrl(String fileName) {
+        var request = GetUrlRequest.builder()
+            .bucket(bucketName)
+            .key(fileName)
+            .build();
+        return s3Client.utilities().getUrl(request).toString();
     }
 }
