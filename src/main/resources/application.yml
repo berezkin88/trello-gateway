@@ -1,9 +1,9 @@
 aws:
   s3:
-    access-key: ${AWS_ACCESS_KEY:}
-    secret-key: ${AWS_SECRET_KEY:}
-    region: ${AWS_S3_REGION:}
-    bucket: ${AWS_S3_BUCKET:}
+    access-key: ${AWS_ACCESS_KEY:test}
+    secret-key: ${AWS_SECRET_KEY:test}
+    region: ${AWS_S3_REGION:us-bogus-1}
+    bucket: ${AWS_S3_BUCKET:bogus}
 
 idx:
   location: ./cat-idx
@@ -37,12 +37,12 @@ idx:
       keywords: "шолом плитоноска броня бронепластина форма екіп рюкзак взуття бреці рукавиці саперський набір бінокль вуха навушники глушник планка пікатіні штани"
 
 source:
-  t-key: foo
-  t-token: boo
-  t-board-id: fooBoo
+  t-key: ${TRELLO_KEY:test}
+  t-token: ${TRELLO_TOKEN:test}
+  t-board-id: ${TRELLO_BOARD_ID:test}
 
 g-translator:
-  url:
+  url: ${G_TRANSLATOR_URL:"https://example.com"}
 
 quarkus:
   s3:

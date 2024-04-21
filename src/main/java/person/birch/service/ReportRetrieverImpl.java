@@ -32,11 +32,14 @@ public class ReportRetrieverImpl implements ReportRetriever {
 
     private final TrelloGateway trelloGateway;
     private final ReportsBuilder reportsBuilder;
+    private final ImageConveyor imageConveyor;
 
     public ReportRetrieverImpl(TrelloGateway trelloGateway,
-                               ReportsBuilder reportsBuilder) {
+                               ReportsBuilder reportsBuilder,
+                               ImageConveyor imageConveyor) {
         this.trelloGateway = trelloGateway;
         this.reportsBuilder = reportsBuilder;
+        this.imageConveyor = imageConveyor;
     }
 
     /**
@@ -61,10 +64,13 @@ public class ReportRetrieverImpl implements ReportRetriever {
             var cards = trelloGateway.getListDetails(listId);
             LOG.info("Перепакування звітів...");
             reportsContext = reportsBuilder.buildReports(cards);
+            LOG.info("Завантаження картинок із Трелло та вивантаження в С3...");
+            imageConveyor.convey(reportsContext.trelloItem().items());
         } catch (URISyntaxException | ExecutionException | TimeoutException | JsonProcessingException e) {
             LOG.error("Failed to retrieve Lists from the Board", e);
             return null;
         } catch (InterruptedException interruptedException) {
+            LOG.error("Failed to get reports from Trello", interruptedException);
             Thread.currentThread().interrupt();
         }
 

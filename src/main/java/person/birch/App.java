@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import person.birch.service.ReportRetriever;
 import person.birch.service.ReportWriter;
 
+// rebuild as command line app https://quarkus.io/guides/command-mode-reference
 @ApplicationScoped
 public class App {
 
