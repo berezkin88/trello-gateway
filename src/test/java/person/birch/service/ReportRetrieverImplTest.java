@@ -14,11 +14,12 @@ class ReportRetrieverImplTest {
     TrelloGateway trelloGateway;
     @Inject
     ReportsBuilder reportsBuilder;
-
+    @Inject
+    ImageConveyor imageConveyor;
 
     @BeforeEach
     void setUp() {
-        reportRetriever = new ReportRetrieverImpl(trelloGateway, reportsBuilder);
+        reportRetriever = new ReportRetrieverImpl(trelloGateway, reportsBuilder, imageConveyor);
     }
 
     @Test

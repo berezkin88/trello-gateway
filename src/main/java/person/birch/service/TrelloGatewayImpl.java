@@ -1,22 +1,26 @@
 package person.birch.service;
 
 import io.smallrye.mutiny.Uni;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import person.birch.config.CredConfig;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
-
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static java.text.MessageFormat.format;
 
-// rebuild as command line app https://quarkus.io/guides/command-mode-reference
 @Singleton
 public class TrelloGatewayImpl implements TrelloGateway {
 
@@ -78,5 +82,24 @@ public class TrelloGatewayImpl implements TrelloGateway {
         var response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
         return Uni.createFrom().future(response).map(HttpResponse::body);
+    }
+
+    @Override
+    public File downloadImage(String imageUrl, String date) throws URISyntaxException, InterruptedException, IOException {
+        var request = HttpRequest.newBuilder()
+            .uri(new URI(imageUrl))
+            .header("Authorization", "OAuth oauth_consumer_key=\"%s\", oauth_token=\"%s\"".formatted(credConfig.tKey(), credConfig.tToken()))
+            .GET()
+            .build();
+
+        var imageExtension = imageUrl.substring(imageUrl.lastIndexOf("."));
+        var tempFile = Files.createTempFile("%s-".formatted(date), imageExtension);
+        var response = client.sendAsync(request, HttpResponse.BodyHandlers.ofFile(tempFile));
+        try {
+            return response.get(10, TimeUnit.SECONDS).body().toFile();
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            LOG.error("Failed to download image [{}]", imageUrl, e);
+            throw new InterruptedException("Failed to download");
+        }
     }
 }
