@@ -1,21 +1,28 @@
 package person.birch;
 
-import jakarta.enterprise.context.ApplicationScoped;
+import io.quarkus.runtime.Quarkus;
+import io.quarkus.runtime.QuarkusApplication;
+import io.quarkus.runtime.annotations.QuarkusMain;
+import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import person.birch.service.ReportRetriever;
 import person.birch.service.ReportWriter;
 
-// rebuild as command line app https://quarkus.io/guides/command-mode-reference
-@ApplicationScoped
-public class App {
+import java.util.Scanner;
 
-    public static final Logger LOG = LoggerFactory.getLogger(App.class);
+// rebuild as command line app https://quarkus.io/guides/command-mode-reference
+@QuarkusMain
+public class App implements QuarkusApplication {
+
+    private static final Logger LOG = LoggerFactory.getLogger(App.class);
 
     private final ReportWriter reportWriter;
     private final ReportRetriever reportRetriever;
 
-    public App(ReportWriter reportWriter, ReportRetriever reportRetriever) {
+    @Inject
+    public App(ReportWriter reportWriter,
+               ReportRetriever reportRetriever) {
         this.reportWriter = reportWriter;
         this.reportRetriever = reportRetriever;
     }
@@ -26,5 +33,38 @@ public class App {
         LOG.info("Отримано {} за вказаний період", reports.trelloItem().items().size());
         reportWriter.writeReport(reports);
         LOG.info("Звіти записано у директорію 'output'");
+    }
+
+    @Override
+    public int run(String... args) throws Exception {
+        var scanner = new Scanner(System.in);
+        LOG.info("""
+            
+            Вас вітає Менеджер Звітів!
+            Будь ласка, введіть запит, за який період Ви хочете сформувати звіти.
+            Формат запиту <місяць рік>. Зразок: серпень 2022
+            """);
+
+        boolean isFinished = false;
+
+        var input = scanner.nextLine();
+        while (!isFinished) {
+            LOG.info(input);
+            if (input.equalsIgnoreCase("exit")) {
+                LOG.info("\nЗавершення роботи Менеджера");
+                isFinished = true;
+                continue;
+            }
+            if (input.isBlank() || input.isEmpty()) {
+                LOG.info("""
+                    
+                    Запит незрозумілий.
+                    Формат запиту <місяць рік>. Зразок: серпень 2022
+                    """);
+            }
+            input = scanner.nextLine();
+        }
+        Quarkus.waitForExit();
+        return 0;
     }
 }

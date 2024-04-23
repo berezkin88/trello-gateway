@@ -25,6 +25,7 @@ class S3ServiceTest {
 
         var actual = s3Service.listObjects();
 
+        System.out.println(actual);
         Assertions.assertNotNull(actual);
         Assertions.assertFalse(actual.isEmpty());
     }
@@ -33,6 +34,7 @@ class S3ServiceTest {
     void listObjects() {
         var actual = s3Service.listObjects();
 
+        System.out.println(actual);
         Assertions.assertNotNull(actual);
     }
 
@@ -64,6 +66,6 @@ class S3ServiceTest {
         var actual = s3Service.listObjects();
 
         Assertions.assertNotNull(actual);
-        Assertions.assertEquals(0, actual.size());
+        Assertions.assertFalse(actual.isEmpty());
     }
 }

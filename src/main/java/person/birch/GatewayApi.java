@@ -12,7 +12,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import java.net.URISyntaxException;
 
-@Path("")
+//@Path("")
 public class GatewayApi {
 
     @Inject

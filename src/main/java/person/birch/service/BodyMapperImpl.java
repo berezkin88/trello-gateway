@@ -116,7 +116,7 @@ public class BodyMapperImpl implements BodyMapper {
 
     private String getPrice(JsonNode nameNode) {
         if (null == nameNode) {
-            return "n/a";
+            return "0";
         }
 
         var nameString = nameNode.textValue();
@@ -124,7 +124,7 @@ public class BodyMapperImpl implements BodyMapper {
         var matcher = pattern.matcher(nameString);
 
         if (!matcher.find()) {
-            return "n/a";
+            return "0";
         }
 
         var price = matcher.group(1)
@@ -136,7 +136,7 @@ public class BodyMapperImpl implements BodyMapper {
             return String.format("%,d", number.intValue());
         } catch (NumberFormatException e) {
             LOG.error("Failed to parse input [{}] for BigDecimal", number);
-            return "n/a";
+            return "0";
         }
     }
 
