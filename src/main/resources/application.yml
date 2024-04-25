@@ -13,10 +13,10 @@ idx:
       keywords: "гума шини ремонт авто ходова колеса акумулятор"
     - key: drones
       title: Drones
-      keywords: "mavic дрон коптер квадрокоптер drone"
+      keywords: "mavic mavik мавік autel лелека дрон коптер квадрокоптер drone"
     - key: electronics
       title: Electronic equipment
-      keywords: "ноутбук laptop tablet планшет комп'ютер монітор"
+      keywords: "ноутбук laptop tablet планшет комп'ютер монітор батарея"
     - key: kits
       title: First aid kits
       keywords: "ліки турнікет бандаж аптечка"
@@ -28,13 +28,13 @@ idx:
       keywords: "холодильник грілка лопата плащ дощовик цигарки сигарети спальник спальний мішок"
     - key: powerGenerator
       title: Power generator
-      keywords: "зарядна станція генератор ecoflow anker павербанк powerbank"
+      keywords: "зарядна станція генератор ecoflow екофлоу еклофло anker павербанк powerbank power bank"
     - key: radios
       title: Radio transmitters
       keywords: "рація старлінк starlink антена реб глушилка"
     - key: equipment
       title: Equipment
-      keywords: "шолом плитоноска броня бронепластина форма екіп рюкзак взуття бреці рукавиці саперський набір бінокль вуха навушники глушник планка пікатіні штани"
+      keywords: "шолом плитоноска броня бронепластина форма екіп рюкзак взуття бреці рукавиці саперський набір бінокль вуха навушники глушник планка пікатіні штани убакс підсумка"
 
 source:
   t-key: ${TRELLO_KEY:test}
