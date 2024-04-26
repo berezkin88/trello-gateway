@@ -13,8 +13,12 @@ import person.birch.model.TrelloItem;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.TextStyle;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -34,9 +38,9 @@ public class ReportsBuilderImpl implements ReportsBuilder {
     }
 
     @Override
-    public ReportsContext buildReports(Uni<String> input) throws TimeoutException, ExecutionException, InterruptedException {
+    public ReportsContext buildReports(Uni<String> input, String monthAndYear) throws TimeoutException, ExecutionException, InterruptedException {
         var originalReports = getUkrReports(input);
-        var descriptionUrk = getDescriptionUrk(originalReports);
+        var descriptionUrk = getDescriptionUrk(originalReports, monthAndYear);
         var descriptionEng = translateDescription(descriptionUrk);
         updateReportsDescriptions(originalReports, descriptionUrk);
         return new ReportsContext(descriptionUrk, descriptionEng, new TrelloItem(originalReports));
@@ -55,25 +59,27 @@ public class ReportsBuilderImpl implements ReportsBuilder {
             .get(10, TimeUnit.SECONDS);
     }
 
-    private Map<String, String> getDescriptionUrk(List<Report> reports) {
+    private Map<String, String> getDescriptionUrk(List<Report> reports, String monthAndYear) {
         if (null == reports || reports.isEmpty()) {
             return Map.of();
         }
+
+        var descriptionDatePrefix = parseDate(monthAndYear);
 
         LOG.info("Збираються описи...");
         var atomicInteger = new AtomicInteger();
         return reports.stream()
             .collect(
                 Collectors.toMap(
-                    report -> "%s-%d".formatted(parseDate(report.getDate()), atomicInteger.incrementAndGet()),
+                    report -> "%s-%d".formatted(descriptionDatePrefix, atomicInteger.incrementAndGet()),
                     Report::getDescription
                 )
             );
     }
 
     /**
-     * @param date input in format like `12.07.2023`
-     * @return a date formatted like `07-2023` (month-year)
+     * @param date input in format like `лютий 2023`
+     * @return a date formatted like `2-2023` (month-year)
      */
     private String parseDate(String date) {
         if (null == date || date.isEmpty()) {
@@ -81,14 +87,18 @@ public class ReportsBuilderImpl implements ReportsBuilder {
             return "%d-%d".formatted(now.getMonthValue(), now.getYear());
         }
 
-        var slit = date.split("\\.");
+        var split = date.split(" ");
 
-        if (3 != slit.length) {
-            var now = LocalDate.now();
-            return "%d-%d".formatted(now.getMonthValue(), now.getYear());
-        }
+        int monthInt = Arrays.stream(Month.values())
+            .filter(
+                month -> month.getDisplayName(TextStyle.FULL_STANDALONE, Locale.of("uk", "UA"))
+                    .equalsIgnoreCase(split[0])
+            )
+            .map(Month::getValue)
+            .findFirst()
+            .orElse(0);
 
-        return "%s-%s".formatted(slit[1], slit[2]);
+        return "%d-%s".formatted(monthInt, split[1]);
     }
 
     private Map<String, String> translateDescription(Map<String, String> descriptionUkr) {

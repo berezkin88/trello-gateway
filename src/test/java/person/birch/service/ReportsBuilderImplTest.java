@@ -20,8 +20,9 @@ class ReportsBuilderImplTest {
 
         var uni = Uni.createFrom().item(example);
 
-        var actual = reportsBuilder.buildReports(uni);
+        var actual = reportsBuilder.buildReports(uni, "лютий 2022");
 
+        System.out.println(actual);
         Assertions.assertNotNull(actual);
     }
 }

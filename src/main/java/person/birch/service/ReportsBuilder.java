@@ -7,5 +7,5 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 public interface ReportsBuilder {
-    ReportsContext buildReports(Uni<String> input) throws ExecutionException, InterruptedException, TimeoutException;
+    ReportsContext buildReports(Uni<String> input, String monthAndYear) throws ExecutionException, InterruptedException, TimeoutException;
 }

@@ -63,7 +63,7 @@ public class ReportRetrieverImpl implements ReportRetriever {
             LOG.info("Отримання обраних звітів...");
             var cards = trelloGateway.getListDetails(listId);
             LOG.info("Перепакування звітів...");
-            reportsContext = reportsBuilder.buildReports(cards);
+            reportsContext = reportsBuilder.buildReports(cards, monthsAndYear);
             LOG.info("Завантаження картинок із Трелло та вивантаження в С3...");
             imageConveyor.convey(reportsContext.trelloItem().items());
         } catch (URISyntaxException | ExecutionException | TimeoutException | JsonProcessingException e) {
