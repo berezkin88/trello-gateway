@@ -79,6 +79,9 @@ public class BodyMapperImpl implements BodyMapper {
         }
     }
 
+    /**
+     * Will return an url of an image that is at least 599px width or the last url from the cover nodes
+     */
     private String getCover(JsonNode coverNode) {
         if (null == coverNode) {
             return "n/a";
@@ -96,7 +99,8 @@ public class BodyMapperImpl implements BodyMapper {
             }
         }
 
-        return "n/a";
+        var lastImage = scaleNodes.get(scaleNodes.size() - 1);
+        return lastImage.get("url").textValue();
     }
 
     private String getDescription(JsonNode nameNode) {

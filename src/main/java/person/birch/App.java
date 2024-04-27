@@ -9,9 +9,6 @@ import org.slf4j.LoggerFactory;
 import person.birch.service.ReportRetriever;
 import person.birch.service.ReportWriter;
 
-import java.util.Scanner;
-
-// rebuild as command line app https://quarkus.io/guides/command-mode-reference
 @QuarkusMain
 public class App implements QuarkusApplication {
 
@@ -30,41 +27,25 @@ public class App implements QuarkusApplication {
     public void getReports(String... args) {
         LOG.info("Створення звітів за {} місяць {} рік", args[0], args[1]);
         var reports = reportRetriever.getReports(args);
-        LOG.info("Отримано {} за вказаний період", reports.trelloItem().items().size());
+        LOG.info("Отримано {} звітів за вказаний період", reports.trelloItem().items().size());
         reportWriter.writeReport(reports);
         LOG.info("Звіти записано у директорію 'output'");
+
     }
 
     @Override
-    public int run(String... args) throws Exception {
-        var scanner = new Scanner(System.in);
-        LOG.info("""
-            
-            Вас вітає Менеджер Звітів!
-            Будь ласка, введіть запит, за який період Ви хочете сформувати звіти.
-            Формат запиту <місяць рік>. Зразок: серпень 2022
-            """);
-
-        boolean isFinished = false;
-
-        var input = scanner.nextLine();
-        while (!isFinished) {
-            LOG.info(input);
-            if (input.equalsIgnoreCase("exit")) {
-                LOG.info("\nЗавершення роботи Менеджера");
-                isFinished = true;
-                continue;
-            }
-            if (input.isBlank() || input.isEmpty()) {
-                LOG.info("""
-                    
-                    Запит незрозумілий.
-                    Формат запиту <місяць рік>. Зразок: серпень 2022
-                    """);
-            }
-            input = scanner.nextLine();
+    public int run(String... args) {
+        if (args.length == 0) {
+            LOG.info("Період для звітів не вказаний");
+            Quarkus.waitForExit();
+            return 1;
         }
+        getReports(args);
         Quarkus.waitForExit();
         return 0;
+    }
+
+    public static void main(String... args) {
+        Quarkus.run(App.class, args);
     }
 }
