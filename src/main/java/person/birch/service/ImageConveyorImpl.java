@@ -33,6 +33,10 @@ public class ImageConveyorImpl implements ImageConveyor {
                 s3Service.uploadFile(imageFile);
                 var s3Url = s3Service.getUrl(imageFile.getName());
                 report.setImage(s3Url);
+                if (imageFile.exists()) {
+                    LOG.info("Mark temporary file to be deleted");
+                    imageFile.deleteOnExit();
+                }
             } catch (URISyntaxException | InterruptedException | IOException e) {
                 LOG.error("Failed to download image from {}", report.getImage(), e);
                 if (e instanceof InterruptedException) {
