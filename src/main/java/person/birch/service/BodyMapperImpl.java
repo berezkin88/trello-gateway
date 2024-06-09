@@ -136,7 +136,7 @@ public class BodyMapperImpl implements BodyMapper {
 
         BigDecimal number = null;
         try {
-            number = new BigDecimal(price).multiply(new BigDecimal(1000));
+            number = new BigDecimal(price.trim()).multiply(new BigDecimal(1000));
             return String.format("%,d", number.intValue());
         } catch (NumberFormatException e) {
             LOG.error("Failed to parse input [{}] for BigDecimal", number);
