@@ -7,4 +7,6 @@ public record TrelloList(String id,
                          String idBoard,
                          String pos,
                          String subscribed,
-                         String softLimit) { }
+                         String softLimit,
+                         String type,
+                         Object datasource) { }
